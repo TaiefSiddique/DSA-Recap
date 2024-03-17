@@ -7,7 +7,7 @@
 void AssignRandomValues (int A[], int s) {
     time_t t;
     srand (t);
-    for (int i = 0; i < s; i++) 
+    for (int i = 0; i < s; i++)
         A[i] = rand() % 100;
 }
 
