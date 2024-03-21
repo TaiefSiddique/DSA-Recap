@@ -25,19 +25,32 @@
 struct Node
 {
     int value;
-    int val2;
     struct Node *next;
 };
 struct Node *CreateNode()
 {
     struct Node *current = (struct Node *)malloc(sizeof(struct Node));
-    scanf("%d %d", &current->value, &current->val2);
+    scanf("%d", &current->value);
     current->next = NULL;
     return current;
 }
-int main()
+struct Node *InsertNode(struct Node *head)
 {
     struct Node *temp = CreateNode();
-    printf("%d %d", temp->value, temp->val2);
+    if (head == NULL)
+        head = temp;
+    else
+    {
+        while (head->next != NULL)
+        {
+            head = head->next;
+        }
+        head->next = temp;
+    }
+}
+int main()
+{
+    struct Node *head = NULL;
+
     return 0;
 }
