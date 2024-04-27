@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #define MAX 20
@@ -6,33 +5,9 @@
 char stk[20];
 int top = -1;
 
-int isEmpty()
-{
-    return top == -1;
-}
-int isFull()
-{
-    return top == MAX - 1;
-}
-
-char peek()
-{
-    return stk[top];
-}
-
-char pop()
-{
-    if (isEmpty())
-        return -1;
-
-    char ch = stk[top];
-    top--;
-    return (ch);
-}
-
 void push(char oper)
 {
-    if (isFull())
+    if (top == MAX - 1)
         printf("Stack Full!!!!");
 
     else
@@ -42,9 +17,22 @@ void push(char oper)
     }
 }
 
+char pop()
+{
+    if (top == -1)
+    {
+        printf("Stack is Empty");
+        return -1;
+    }
+
+    char ch = stk[top];
+    top--;
+    return (ch);
+}
+
 int checkIfOperand(char ch)
 {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
 }
 
 int precedence(char ch)
@@ -65,45 +53,47 @@ int precedence(char ch)
     return -1;
 }
 
-int covertInfixToPostfix(char *expression)
+int covertInfixToPostfix(char exp[], char out[])
 {
     int i, j;
 
-    for (i = 0, j = -1; expression[i]; ++i)
+    for (i = 0, j = -1; exp[i] != '\0'; i++)
     {
-        if (checkIfOperand(expression[i]))
-            expression[++j] = expression[i];
+        if (checkIfOperand(exp[i]))
+            out[++j] = exp[i];
 
-        else if (expression[i] == '(')
-            push(expression[i]);
+        else if (exp[i] == '(')
+            push('(');
 
-        else if (expression[i] == ')')
+        else if (exp[i] == ')')
         {
-            while (!isEmpty() && peek() != '(')
-                expression[++j] = pop();
-            if (!isEmpty() && peek() != '(')
+            while (top >= 0 && stk[top] != '(')
+                out[++j] = pop();
+            if (top >= 0 && stk[top] != '(')
                 return -1; // invalid expression
             else
                 pop();
         }
         else // if an opertor
         {
-            while (!isEmpty() && precedence(expression[i]) <= precedence(peek()))
-                expression[++j] = pop();
-            push(expression[i]);
+            while (top >= 0 && precedence(exp[i]) <= precedence(stk[top]))
+                out[++j] = pop();
+            push(exp[i]);
         }
     }
 
-    while (!isEmpty())
-        expression[++j] = pop();
+    while (top >= 0)
+        out[++j] = pop();
 
-    expression[++j] = '\0';
-    printf("%s", expression);
+    out[++j] = '\0';
+    // printf("%s", expression);
 }
 
 int main()
 {
     char expression[] = "((p+(q*r))-s)";
-    covertInfixToPostfix(expression);
+    char output[MAX] = {'\0'};
+    covertInfixToPostfix(expression, output);
+    printf("%s %s\n", expression, output);
     return 0;
 }
